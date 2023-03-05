@@ -55,9 +55,9 @@ export default function Home() {
     <main className={styles.main}>
       <div className='rounded w-6/12'>
         <Header />
-        <div className='rounded flex bg-inherit w-full flex h-24 bg-gray-900'>
+        <div className='rounded flex w-full flex h-24'>
           <input
-            className='text-center rounded w-full bg-gray-900'
+            className='text-center rounded w-full'
             placeholder='Hexadecimal Address (0x...)'
             value={addr}
             disabled={true}
@@ -65,8 +65,8 @@ export default function Home() {
             autoFocus
           />
 
-          <span className='flex flex-col items-center justify-center ml-4 mr-4 bg-gray-900 w-24' onClick={() => connectAccount(updateAddress)}>
-            <img alt='metamask' src="/memtamask.webp" className='w-10 h-10 mr-4 bg-gray-900' />
+          <span className='flex flex-col items-center justify-center ml-4 mr-4 w-24' onClick={() => connectAccount(updateAddress)}>
+            <img alt='metamask' src="/memtamask.webp" className='w-10 h-10 mr-4' />
             Connect
           </span>
         </div>

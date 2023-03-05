@@ -65,8 +65,7 @@ export default function Home() {
             autoFocus
           />
 
-
-          <span className='flex flex-col items-center justify-center ml-4 mr-4 bg-gray-900' onClick={() => connectAccount(updateAddress)}>
+          <span className='flex flex-col items-center justify-center ml-4 mr-4 bg-gray-900 w-24' onClick={() => connectAccount(updateAddress)}>
             <img alt='metamask' src="/memtamask.webp" className='w-10 h-10 mr-4 bg-gray-900' />
             Connect
           </span>

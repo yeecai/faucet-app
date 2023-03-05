@@ -1,91 +1,98 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+"use client";
 import styles from './page.module.css'
+import { useState } from 'react'
+import { connectAccount } from './metamask';
+import { ethers } from 'ethers'
+import useProvider from './utils';
+import { ABI, ADDR } from './constant';
+import Header from './header';
 
-const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const [address, setAddress] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false);
+  const [hash, setHash] = useState('')
+  const { addr, provider } = useProvider()
+  const [err, setError] = useState('')
+  const [inputAddress, setInputAddress] = useState<string>()
+
+  function updateAddress(addr: any): void {
+    setInputAddress(addr!)
+    if (addr) {
+      if (ethers.utils.isAddress(addr)) {
+        setAddress(addr)
+      } else {
+        setAddress(null)
+      }
+    } else if (address != null) {
+      setAddress(null)
+    }
+  }
+  const getTokenContract = (providerOrSigner: ethers.providers.JsonRpcSigner) => {
+    const tokenContract = new ethers.Contract(
+      ADDR,
+      ABI,
+      providerOrSigner
+    );
+    return tokenContract;
+  };
+  async function sendToken() {
+    setIsLoading(true);
+    try {
+      const contract = getTokenContract(provider!.getSigner());
+      const res = await contract.faucet()
+      const data = await res.wait()
+      // console.log('data', data)
+      setHash(data.transactionHash);
+    } catch (err) {
+      setError(JSON.stringify(err))
+    }
+
+    setIsLoading(false);
+  }
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+      <div className='rounded w-6/12'>
+        <Header />
+        <div className='rounded flex bg-inherit w-full flex h-24 bg-gray-900'>
+          <input
+            className='text-center rounded w-full'
+            placeholder='Hexadecimal Address (0x...)'
+            value={addr}
+            disabled={true}
+            onChange={(e) => updateAddress(e.target.value)}
+            autoFocus
+          />
+
+
+          <span className='flex flex-col items-center justify-center ml-4 mr-4 bg-gray-900' onClick={() => connectAccount(updateAddress)}>
+            <img alt='metamask' src="/memtamask.webp" className='w-10 h-10 mr-4 bg-gray-900' />
+            Connect
+          </span>
         </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
+        {/* Please try again after 8hours */}
+        <div className='flex bg-inherit w-full flex h-24'>
+          {isLoading ? <div className="mx-auto w-[50px] h-[50px] mt-5 rounded-full border-t-2 border-gray-700 animate-spin"></div>
+            : provider && <button className="w-full bg-submit-button select-none mx-auto px-3 py-2 cursor-pointer bg-black text-2xl my-1 text-center rounded font-montserrat text-white txt-button-shadow" onClick={sendToken} disabled={!address && !addr}>REQUEST USDC</button>}
         </div>
+        {hash ? (
+          <div className="select-none w-full">
+            Transaction hash:{" "}
+            <a
+              target="_blank"
+              rel="noopennner noreferrer"
+              className="break-words w-full"
+              href={"https://testnet.snowtrace.io/tx/" + hash}
+            >
+              {hash}
+            </a>
+          </div>
+        ) : (
+          <></>
+        )}
+        {err && <div className='w-full break-words'>{err}</div>}
       </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </main >
   )
 }

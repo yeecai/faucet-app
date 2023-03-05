@@ -57,7 +57,7 @@ export default function Home() {
         <Header />
         <div className='rounded flex bg-inherit w-full flex h-24 bg-gray-900'>
           <input
-            className='text-center rounded w-full'
+            className='text-center rounded w-full bg-gray-900'
             placeholder='Hexadecimal Address (0x...)'
             value={addr}
             disabled={true}

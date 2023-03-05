@@ -55,17 +55,17 @@ export default function Home() {
     <main className={styles.main}>
       <div className='rounded w-6/12'>
         <Header />
-        <div className='rounded flex w-full flex h-24'>
+        <div className='rounded fle flex h-24'>
           <input
-            className='text-center rounded w-full'
-            placeholder='Hexadecimal Address (0x...)'
+            className='text-1xl rounded w-full'
+            placeholder='Click connect to get address'
             value={addr}
             disabled={true}
-            onChange={(e) => updateAddress(e.target.value)}
+            // onChange={(e) => updateAddress(e.target.value)}
             autoFocus
           />
 
-          <span className='flex flex-col items-center justify-center ml-4 mr-4 w-24' onClick={() => connectAccount(updateAddress)}>
+          <span className='flex flex-col items-center justify-center ml-4 mr-4 w-24 cursor-pointer' onClick={() => connectAccount(updateAddress)}>
             <img alt='metamask' src="/memtamask.webp" className='w-10 h-10 mr-4' />
             Connect
           </span>
@@ -73,7 +73,7 @@ export default function Home() {
         {/* Please try again after 8hours */}
         <div className='flex bg-inherit w-full flex h-24'>
           {isLoading ? <div className="mx-auto w-[50px] h-[50px] mt-5 rounded-full border-t-2 border-gray-700 animate-spin"></div>
-            : provider && <button className="w-full bg-submit-button select-none mx-auto px-3 py-2 cursor-pointer bg-black text-2xl my-1 text-center rounded font-montserrat text-white txt-button-shadow" onClick={sendToken} disabled={!address && !addr}>REQUEST USDC</button>}
+            : provider && <button className="w-full bg-submit-button select-none mx-auto px-3 py-2 cursor-pointer bg-black text-1xl my-1 text-center rounded font-montserrat text-white txt-button-shadow" onClick={sendToken} disabled={!address && !addr}>REQUEST USDC</button>}
         </div>
         {hash ? (
           <div className="select-none w-full">
